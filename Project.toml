@@ -1,0 +1,7 @@
+[deps]
+Catalyst = "479239e8-5488-4da2-87a7-35f2df7eef83"
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+Plots = "91a5bcd2-7d93-57b2-bf6f-7e9e7a5f8b6c"
+Symbolics = "d1185830-fcd6-423d-90d6-e5a15663c6f7"
+Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316" 
