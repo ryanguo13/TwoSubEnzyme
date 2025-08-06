@@ -5,7 +5,6 @@ This project uses Julia Catalyst package to derive the kinetic equations for the
 ## Project Structure
 
 - `main.jl`: Main derivation code, including complete mathematical derivation and visualization
-- `derivation.jl`: Detailed mathematical derivation process
 - `simulation.jl`: Numerical simulation to validate derivation results
 - `Project.toml`: Project dependency file
 
@@ -26,47 +25,41 @@ Where:
 
 ### 1. Steady-State Enzyme-Substrate Complex Concentration
 
-Under steady-state conditions, `d[EST]/dt = 0`, we obtain:
+Under steady-state conditions, $\frac{d[EST]}{dt} = 0$, we obtain:
 
-```
-EST = (k1f*S*T + k2r*P*Q)*Etot / (k1r + k2f + k1f*S*T + k2r*P*Q)
-```
+$$[EST] = \frac{(k_{1f}[S][T] + k_{2r}[P][Q])[E]_{tot}}{k_{1r} + k_{2f} + k_{1f}[S][T] + k_{2r}[P][Q]}$$
 
 ### 2. Net Reaction Rate Equation
 
-```
-v = (Vmf*S*T/(Ks*Kt) - Vmr*P*Q/(Kp*Kq)) / (1 + S*T/(Ks*Kt) + P*Q/(Kp*Kq))
-```
+$$v = \frac{V_{mf}[S][T]/(K_s K_t) - V_{mr}[P][Q]/(K_p K_q)}{1 + [S][T]/(K_s K_t) + [P][Q]/(K_p K_q)}$$
 
 Where:
 
-- `Vmf = k2f * Etot`: Maximum forward velocity
-- `Vmr = k1r * Etot`: Maximum reverse velocity
-- `Ks = (k1r + k2f) / k1f`: Michaelis constant for substrate S
-- `Kt = (k1r + k2f) / k1f`: Michaelis constant for substrate T
-- `Kp = (k1r + k2f) / k2r`: Michaelis constant for product P
-- `Kq = (k1r + k2f) / k2r`: Michaelis constant for product Q
+- $V_{mf} = k_{2f} \cdot [E]_{tot}$: Maximum forward velocity
+- $V_{mr} = k_{1r} \cdot [E]_{tot}$: Maximum reverse velocity
+- $K_s = \frac{k_{1r} + k_{2f}}{k_{1f}}$: Michaelis constant for substrate S
+- $K_t = \frac{k_{1r} + k_{2f}}{k_{1f}}$: Michaelis constant for substrate T
+- $K_p = \frac{k_{1r} + k_{2f}}{k_{2r}}$: Michaelis constant for product P
+- $K_q = \frac{k_{1r} + k_{2f}}{k_{2r}}$: Michaelis constant for product Q
 
 ### 3. Thermodynamic Relationships
 
-- Reaction quotient: `Q = [P][Q]/([S][T])`
-- Equilibrium constant: `Keq = k1f*k2f/(k1r*k2r)`
-- Standard Gibbs free energy change: `ΔG° = -RT*ln(Keq)`
-- Actual Gibbs free energy change: `ΔGr = ΔG° + RT*ln(Q)`
+- Reaction quotient: $Q = \frac{[P][Q]}{[S][T]}$
+- Equilibrium constant: $K_{eq} = \frac{k_{1f}k_{2f}}{k_{1r}k_{2r}}$
+- Standard Gibbs free energy change: $\Delta G^\circ = -RT\ln(K_{eq})$
+- Actual Gibbs free energy change: $\Delta G_r = \Delta G^\circ + RT\ln(Q)$
 
 ### 4. Flux Ratio
 
-```
-J+/J- = e^(-ΔGr/RT) = Keq/Q
-```
+$$\frac{J_+}{J_-} = e^{-\Delta G_r/RT} = \frac{K_{eq}}{Q}$$
 
 ## Comparison with Single-Substrate Reaction
 
 | Item              | Single-Substrate Reaction                             | Two-Substrate Reaction                                                                    |
 | ----------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Reaction          | S + E <=> ES <=> E + P                                | S + T + E <=> EST <=> E + P + Q                                                           |
-| Rate Equation     | v = (Vmf*[S]/Ks - Vmr*[P]/Kp) / (1 + [S]/Ks + [P]/Kp) | v = (Vmf*[S][T]/(Ks*Kt) - Vmr*[P][Q]/(Kp*Kq)) / (1 + [S][T]/(Ks*Kt) + [P][Q]/(Kp*Kq)) |
-| Reaction Quotient | Q = [P]/[S]                                           | Q = [P][Q]/([S][T])                                                                       |
+| Reaction          | $S + E \rightleftharpoons ES \rightleftharpoons E + P$ | $S + T + E \rightleftharpoons EST \rightleftharpoons E + P + Q$                           |
+| Rate Equation     | $v = \frac{V_{mf}[S]/K_s - V_{mr}[P]/K_p}{1 + [S]/K_s + [P]/K_p}$ | $v = \frac{V_{mf}[S][T]/(K_s K_t) - V_{mr}[P][Q]/(K_p K_q)}{1 + [S][T]/(K_s K_t) + [P][Q]/(K_p K_q)}$ |
+| Reaction Quotient | $Q = \frac{[P]}{[S]}$                                 | $Q = \frac{[P][Q]}{[S][T]}$                                                               |
 
 ## Running the Project
 
