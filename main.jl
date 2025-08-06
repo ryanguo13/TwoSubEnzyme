@@ -4,6 +4,8 @@ using Symbolics
 using Latexify
 using Plots
 
+
+# pythonplot()
 # Define reaction system: S + T + E <=> EST <=> E + P + Q
 @reaction_network TwoSubEnzyme begin
     # Step 1: S + T + E <=> EST
@@ -97,15 +99,19 @@ println("J+/J- = e^(-ΔGr/RT) = Keq/Q")
 # Create visualization function
 function plot_flux_ratio_vs_gibbs()
     # Create Gibbs free energy change range
-    ΔGr_range = -40:0.1:0  # kJ/mol
+    ΔGr_range = -40:0.1:10  # kJ/mol
     
     # Calculate flux ratios for different S/T ratios
     S_T_ratios = [0.2, 1.0, 5.0]
     colors = [:blue, :orange, :gray]
     
-    p = plot(xlabel="ΔGr (kJ/mol)", ylabel="J+/J-", 
+    # Create plot with custom font settings
+    # Use Google Sans Code but handle Unicode characters
+    p = plot(xlabel="Delta G_r (kJ/mol)", ylabel="J+/J-", 
              yscale=:log10, title="Two-Substrate Enzyme Reaction Flux Ratio",
-             legend=:topleft)
+             legend=:topleft, 
+             fontfamily="GoogleSansCode-Regular",
+             fontsize=12, titlefontsize=14, legendfontsize=8)
     
     for (i, ratio) in enumerate(S_T_ratios)
         # For given S/T ratio, calculate flux ratio
