@@ -29,7 +29,7 @@ p = [1.0, 0.1, 2.0, 0.05]  # [k1f, k1r, k2f, k2r]
 u0 = [10.0, 5.0, 1.0, 0.0, 0.0, 0.0]
 
 # Time range
-tspan = (0.0, 100.0)
+tspan = (0.0, 10.0)
 
 # Create ODE problem
 prob = ODEProblem(two_substrate_system!, u0, tspan, p)

@@ -3,7 +3,7 @@ using ModelingToolkit
 using Symbolics
 using Latexify
 using Plots
-
+using CairoMakie, GraphMakie, NetworkLayout
 
 # pythonplot()
 # Define reaction system: S + T + E <=> EST <=> E + P + Q
@@ -14,6 +14,9 @@ using Plots
     # Step 2: EST <=> E + P + Q  
     (k2f, k2r), EST <--> E + P + Q
 end
+
+
+plot_network(TwoSubEnzyme)
 
 # Temperature constants
 T_val = 298  # K
@@ -79,6 +82,13 @@ J_minus = k2r*P*Q*(Etot - EST_ss)  # Reverse flux
 
 # Flux ratio
 flux_ratio = J_plus/J_minus
+
+# Latexify the below equations using Latexify
+println(latexify(ΔGr))
+println(latexify(J_plus))
+println(latexify(J_minus))
+println(latexify(flux_ratio))
+
 
 println("=== Two-Substrate Two-Product Reversible Enzyme Reaction Derivation ===")
 println("Reaction: S + T + E <=> EST <=> E + P + Q")
