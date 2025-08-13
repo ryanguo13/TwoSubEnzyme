@@ -1,7 +1,9 @@
 [deps]
 Catalyst = "479239e8-5488-4da2-87a7-35f2df7eef83"
-ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
-Plots = "91a5bcd2-7d93-57b2-bf6f-7e9e7a5f8b6c"
-Symbolics = "d1185830-fcd6-423d-90d6-e5a15663c6f7"
-Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316" 
+GraphMakie = "1ecd5474-83a3-4783-bb4f-06765db800d2"
+Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+NetworkLayout = "46757867-2c16-5918-afeb-47bfcb05e46a"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"

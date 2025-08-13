@@ -3,7 +3,7 @@ using ModelingToolkit
 using Symbolics
 using Latexify
 using Plots
-using CairoMakie, GraphMakie, NetworkLayout
+
 
 # pythonplot()
 # Define reaction system: S + T + E <=> EST <=> E + P + Q
@@ -14,9 +14,6 @@ using CairoMakie, GraphMakie, NetworkLayout
     # Step 2: EST <=> E + P + Q  
     (k2f, k2r), EST <--> E + P + Q
 end
-
-
-plot_network(TwoSubEnzyme)
 
 # Temperature constants
 T_val = 298  # K
@@ -44,11 +41,11 @@ Etot = E + EST
 # EST*(k1r + k2f + k1f*S*T + k2r*P*Q) = (k1f*S*T + k2r*P*Q)*Etot
 # EST = (k1f*S*T + k2r*P*Q)*Etot / (k1r + k2f + k1f*S*T + k2r*P*Q)
 
-# Define Michaelis constants
-Ks = (k1r + k2f) / k1f  # Michaelis constant for substrate S
-Kt = (k1r + k2f) / k1f  # Michaelis constant for substrate T  
-Kp = (k1r + k2f) / k2r  # Michaelis constant for product P
-Kq = (k1r + k2f) / k2r  # Michaelis constant for product Q
+# Define Michaelis constants (corrected)
+Ks = k1r / k1f  # Michaelis constant for substrate S
+Kt = k1r / k1f  # Michaelis constant for substrate T (assuming same binding affinity)
+Kp = k2f / k2r  # Michaelis constant for product P
+Kq = k2f / k2r  # Michaelis constant for product Q (assuming same binding affinity)
 
 # Define maximum velocities
 Vmf = k2f * Etot  # Maximum forward velocity
@@ -64,8 +61,8 @@ v = k2f*EST_ss - k2r*P*Q*(Etot - EST_ss)
 # Simplified rate equation
 # v = (Vmf*S*T/(Ks*Kt) - Vmr*P*Q/(Kp*Kq)) / (1 + S*T/(Ks*Kt) + P*Q/(Kp*Kq))
 
-# Define reaction quotient Q = [P][Q]/([S][T])
-Q = P*Q/(S*T)
+# Define reaction quotient (renamed to avoid conflict)
+reaction_quotient = P*Q/(S*T)
 
 # Define equilibrium constant Keq = k1f*k2f/(k1r*k2r)
 Keq = k1f*k2f/(k1r*k2r)
@@ -74,7 +71,7 @@ Keq = k1f*k2f/(k1r*k2r)
 ΔG° = -R_val*T_val*log(Keq)  # where R is gas constant, T is temperature
 
 # Actual Gibbs free energy change
-ΔGr = ΔG° + R_val*T_val*log(Q)
+ΔGr = ΔG° + R_val*T_val*log(reaction_quotient)
 
 # Forward and reverse fluxes
 J_plus = k2f*EST_ss  # Forward flux
@@ -83,14 +80,34 @@ J_minus = k2r*P*Q*(Etot - EST_ss)  # Reverse flux
 # Flux ratio
 flux_ratio = J_plus/J_minus
 
-# Latexify the below equations using Latexify
+# Set numerical values for parameters and concentrations
+param_values = Dict(
+    k1f => 1.0e6,  # M^-2 s^-1
+    k1r => 1.0e3,  # s^-1
+    k2f => 1.0e2,  # s^-1
+    k2r => 1.0e5   # M^-2 s^-1
+)
+
+conc_values = Dict(
+    S => 1.0e-3,   # M
+    T => 1.0e-3,   # M
+    E => 1.0e-6,   # M
+    EST => 1.0e-8, # M
+    P => 1.0e-4,   # M
+    Q => 1.0e-4    # M
+)
+
+# Latexify the equations using Latexify
+println("Gibbs free energy change:")
 println(latexify(ΔGr))
+println("\nForward flux:")
 println(latexify(J_plus))
+println("\nReverse flux:")
 println(latexify(J_minus))
+println("\nFlux ratio:")
 println(latexify(flux_ratio))
 
-
-println("=== Two-Substrate Two-Product Reversible Enzyme Reaction Derivation ===")
+println("\n=== Two-Substrate Two-Product Reversible Enzyme Reaction Derivation ===")
 println("Reaction: S + T + E <=> EST <=> E + P + Q")
 println()
 println("Steady-state enzyme-substrate complex concentration:")
@@ -116,19 +133,21 @@ function plot_flux_ratio_vs_gibbs()
     colors = [:blue, :orange, :gray]
     
     # Create plot with custom font settings
-    # Use Google Sans Code but handle Unicode characters
-    p = plot(xlabel="Delta G_r (kJ/mol)", ylabel="J+/J-", 
+    p = plot(xlabel="ΔG_r (kJ/mol)", ylabel="J+/J-", 
              yscale=:log10, title="Two-Substrate Enzyme Reaction Flux Ratio",
              legend=:topleft, 
-             fontfamily="GoogleSansCode-Regular",
              fontsize=12, titlefontsize=14, legendfontsize=8)
     
     for (i, ratio) in enumerate(S_T_ratios)
-        # For given S/T ratio, calculate flux ratio
+        # Calculate flux ratio based on thermodynamic relationship
+        # J+/J- = exp(-ΔGr/RT) * (S*T ratio factor)
         flux_ratios = exp.(-ΔGr_range ./ (R_val*T_val/1000)) .* ratio
         plot!(p, ΔGr_range, flux_ratios, 
               label="S/T = $ratio", color=colors[i], linewidth=2)
     end
+    
+    # Add equilibrium line (flux ratio = 1)
+    hline!([1.0], label="Equilibrium", color=:red, linestyle=:dash, linewidth=1)
     
     return p
 end
